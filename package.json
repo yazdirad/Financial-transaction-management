@@ -9,7 +9,7 @@
     "express-ejs-layouts": "^2.5.1"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "Mahdi YazdiRad",
   "license": "ISC"
