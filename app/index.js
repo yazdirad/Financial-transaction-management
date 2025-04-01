@@ -12,7 +12,7 @@ module.exports = class Application {
     }
 
     configServer() {
-        app.listen('8000', (err) => {
+        app.listen('3000', (err) => {
             if (err) console.log(err)
             console.log('server run on port 8000')
         })
