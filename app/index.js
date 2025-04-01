@@ -1,12 +1,14 @@
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+const mySql = require('mysql');
 
 const app = express();
 
 module.exports = class Application {
     constructor() {
         this.configServer();
+        this.configDatabase();
         this.setConfig();
         this.setRoutes();
     }
@@ -14,8 +16,18 @@ module.exports = class Application {
     configServer() {
         app.listen('3000', (err) => {
             if (err) console.log(err)
-            console.log('server run on port 8000')
+            console.log('server run on port 3000')
         })
+    }
+
+    configDatabase() {
+        const connection = mySql.createConnection({
+            host: 'services.irn1.chabokan.net',
+            port: 3070,
+            user: 'sakhteman994_susan',
+            password: 'hb4azo6aHtcZ',
+            database: 'sakhteman994_susan'
+        });
     }
 
     setConfig() {
@@ -29,20 +41,6 @@ module.exports = class Application {
     }
 
     setRoutes() {
-        app.get('/', (req, res) => {
-            res.render('index')
-        });
-
-        app.get('/add', (req, res) => {
-            res.render('add')
-        });
-
-        app.get('/list', (req, res) => {
-            res.render('list')
-        });
-
-        app.get('/report', (req, res) => {
-            res.render('report')
-        });
+        app.use(require('./routes'))
     }
 }

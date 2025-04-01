@@ -6,11 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Simple Sidebar - Start Bootstrap Template</title>
+    <title>نرم افزار مدیریت مالی ساختمان سماء</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="css/styles.css" rel="stylesheet" />
+    <!-- CSS (includes Bootstrap)-->
+    <link rel='stylesheet' href="/css/bootstrap.min.css">
+    <link rel='stylesheet' href="/css/bootstrap-rtl.min.css">
+    <link rel='stylesheet' href="/css/vazir.css">
+    <link rel='stylesheet' href="/css/admin.css">
+    <link rel="stylesheet" href="/css/styles.css" />
 
     <%- style %>
 
@@ -21,13 +25,18 @@
         <!-- Sidebar-->
         <div class="border-end bg-white" id="sidebar-wrapper">
             <div class="sidebar-heading border-bottom bg-light">
-                <a class="list-group-item list-group-item-light" href="/">ساختمان سماء</a>
+                <p class="list-group-item " href="/">ساختمان سماء</p>
             </div>
             <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="add">ثبت تراکنش</a>
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="list">مشاهده تراکنش
+                <a class="list-group-item list-group-item-info">عملیات</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/units">واحدها</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/categories">سرفصل های
+                    مالی</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/transactions">تراکنش
                     ها</a>
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="report">تراز مالی</a>
+                <a class="list-group-item list-group-item-info">گزارشات</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/reports/balance">تراز
+                    مالی</a>
             </div>
         </div>
 
@@ -46,8 +55,11 @@
     </div>
 
 
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
+    <!-- JS -->
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/scripts.js"></script>
     <%- script %>
 </body>
 
