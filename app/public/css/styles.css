@@ -1931,6 +1931,16 @@ progress {
   -webkit-overflow-scrolling: touch;
 }
 
+table th:nth-child(1), table td:nth-child(1) {
+  text-align: center; /* متن در وسط هر ستون */
+  width: 60px;
+}
+
+table th:last-child, table td:last-child {
+  text-align: center; /* متن در وسط هر ستون */
+  width: 200px;
+}
+
 @media (max-width: 575.98px) {
   .table-responsive-sm {
     overflow-x: auto;
@@ -5059,6 +5069,8 @@ textarea.form-control-lg {
 .modal-header .btn-close {
   padding: calc(var(--bs-modal-header-padding-y) * 0.5) calc(var(--bs-modal-header-padding-x) * 0.5);
   margin: calc(-0.5 * var(--bs-modal-header-padding-y)) calc(-0.5 * var(--bs-modal-header-padding-x)) calc(-0.5 * var(--bs-modal-header-padding-y)) auto;
+  position: absolute;
+  left: 10px; /* فاصله از سمت چپ */
 }
 
 .modal-title {

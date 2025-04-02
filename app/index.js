@@ -1,14 +1,13 @@
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
-const mySql = require('mysql');
-
+const mySql = require('mysql2');
+const bodyParser = require('body-parser');
 const app = express();
 
 module.exports = class Application {
     constructor() {
         this.configServer();
-        this.configDatabase();
         this.setConfig();
         this.setRoutes();
     }
@@ -20,16 +19,6 @@ module.exports = class Application {
         })
     }
 
-    configDatabase() {
-        const connection = mySql.createConnection({
-            host: 'services.irn1.chabokan.net',
-            port: 3070,
-            user: 'sakhteman994_susan',
-            password: 'hb4azo6aHtcZ',
-            database: 'sakhteman994_susan'
-        });
-    }
-
     setConfig() {
         app.use(express.static(__dirname + '/public'))
         app.set('view engine', 'ejs');
@@ -38,6 +27,8 @@ module.exports = class Application {
         app.set('layout', 'master');
         app.set('layout extractScripts', true);
         app.set('layout extractStyles', true);
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
     }
 
     setRoutes() {
