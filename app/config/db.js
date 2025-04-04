@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
     host: 'services.irn1.chabokan.net',
@@ -11,4 +11,4 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-module.exports = pool.promise();  // استفاده از پرامیس برای راحتی در async/await
+module.exports = pool;

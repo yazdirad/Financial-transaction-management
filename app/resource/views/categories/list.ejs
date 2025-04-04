@@ -15,6 +15,7 @@
                     <tr>
                         <th>#</th>
                         <th>عنوان</th>
+                        <th>نوع</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
@@ -29,8 +30,12 @@
                                     <%= category.title %>
                                 </td>
                                 <td>
+                                    <%= Object.values(categoriesType).find(item=> item.id == category.type)?.title %>
+                                </td>
+                                <td>
                                     <button class="btn btn-sm btn-warning edit-btn" data-id="<%= category.id %>"
-                                        data-name="<%= category.title %>">
+                                        data-name="<%= category.title %>" 
+                                        data-type="<%= category.type %>">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="<%= category.id %>">
@@ -55,15 +60,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">افزودن دسته‌بندی</h5>
+                <h5 class="modal-title" id="modalTitle">افزودن سزفصل</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="categoryForm">
                     <input type="hidden" id="categoryId" name="id"> <!-- برای تشخیص Add یا Update -->
                     <div class="mb-3">
-                        <label for="categoryTitle" class="form-label">نام دسته‌بندی</label>
+                        <label for="categoryTitle" class="form-label">نام سرفصل</label>
                         <input type="text" class="form-control" id="categoryTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryType" class="form-label">نوع سرفصل</label>
+                        <select class="form-select" id="categoryType" name="categoryType" aria-label="Default select" required>
+                            <% if (Object.values(categoriesType).length> 0) { %>
+                                <% (Object.values(categoriesType)).forEach((categoryType, index)=> { %>
+                                    <option value="<%= categoryType.id %>" >
+                                        <%= categoryType.title %>
+                                    </option>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <option selected>هیچ آیتمی یافت نشد!</option>
+                                            <% } %>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-success">ذخیره</button>
                 </form>
@@ -97,22 +116,25 @@
         const modalTitle = document.getElementById("modalTitle");
         const categoryIdInput = document.getElementById("categoryId");
         const categoryTitleInput = document.getElementById("categoryTitle");
+        const categoryTypeInput = document.getElementById("categoryType");
         const categoryForm = document.getElementById("categoryForm");
 
         // وقتی دکمه افزودن کلیک شد، مودال در حالت افزودن باز شود
         document.getElementById("addCategoryBtn").addEventListener("click", function () {
-            modalTitle.innerText = "افزودن دسته‌بندی";
+            modalTitle.innerText = "افزودن سرفصل";
             categoryIdInput.value = "";  // مقدار ID را پاک کن
             categoryTitleInput.value = "";
+            categoryTypeInput.value = "";
             modal.show();
         });
 
         // وقتی دکمه ویرایش کلیک شد، مقدارها را پر کند
         document.querySelectorAll(".edit-btn").forEach(button => {
             button.addEventListener("click", function () {
-                modalTitle.innerText = "ویرایش دسته‌بندی";
+                modalTitle.innerText = "ویرایش سرفصل";
                 categoryIdInput.value = this.getAttribute("data-id");
                 categoryTitleInput.value = this.getAttribute("data-name");
+                categoryTypeInput.value = this.getAttribute("data-type");
                 modal.show();
             });
         });
@@ -137,7 +159,7 @@
                         modal.hide();
                         location.reload();
                     } else {
-                        alert("خطا در ذخیره‌سازی دسته‌بندی");
+                        alert("خطا در ذخیره‌سازی سرفصل");
                     }
                 })
                 .catch(error => console.error("Error:", error));
@@ -164,7 +186,7 @@
                             deleteConfirmModal.hide(); // مخفی کردن مودال تایید حذف
                             location.reload(); // صفحه رفرش
                         } else {
-                            alert("خطا در حذف دسته‌بندی");
+                            alert("خطا در حذف سرفصل");
                         }
                     })
                     .catch(error => console.error("Error:", error));

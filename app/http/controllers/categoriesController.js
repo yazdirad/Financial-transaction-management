@@ -1,10 +1,11 @@
 const db = require('./../../config/db');
+const categoriesType = require('./../../models/enums/categoriesType');
 
 class categoriesController {
     showList = async (req, res) => {
         try {
             const [rows] = await db.query('SELECT * FROM categories');
-            res.render('categories/list', { categories: rows })
+            res.render('categories/list', { categories: rows, categoriesType: categoriesType })
         } catch (error) {
             console.error('Error fetching users:', error);
             res.status(500).send('Server Error');
@@ -12,9 +13,32 @@ class categoriesController {
     }
 
     addCategory = async (req, res) => {
+        const { title } = req.body;
+        const { categoryType } = req.body;
+
+        if (!title) {
+            return res.status(400).json({
+                success: false,
+                message: "عنوان الزامی است!"
+            });
+        }
+
+        if (!categoryType) {
+            return res.status(400).json({
+                success: false,
+                message: "انتخاب نوع حساب الزامی است!"
+            });
+        }
+
+        if (!(Object.values(categoriesType).include(categoryType))) {
+            return res.status(400).json({
+                success: false,
+                message: "نوع حساب معتبر نیست!"
+            });
+        }
+
         try {
-            const { title } = req.body;
-            const [result] = await db.query("INSERT INTO categories (title) VALUES (?)", [title]);
+            const [result] = await db.query("INSERT INTO categories (title,type) VALUES (?,?)", [title, categoryType]);
 
             if (result.insertId) {
                 res.json({ success: true });
@@ -23,7 +47,7 @@ class categoriesController {
             }
         } catch (error) {
             console.error("Error adding category:", error);
-            res.json({ success: false, message: "خطای سرور" });
+            res.status(500).json({ success: false, message: "خطای سرور" });
         }
     };
 
@@ -31,10 +55,11 @@ class categoriesController {
         try {
             const { id } = req.params; // گرفتن id از پارامتر URL
             const { title } = req.body;
+            const { categoryType } = req.body;
 
             const [result] = await db.query(
-                "UPDATE categories SET title = ? WHERE id = ?",
-                [title, id]
+                "UPDATE categories SET title = ?, type = ? WHERE id = ?",
+                [title, categoryType, id]
             );
 
             if (result.affectedRows > 0) {
@@ -44,7 +69,7 @@ class categoriesController {
             }
         } catch (error) {
             console.error("Error updating category:", error);
-            res.json({ success: false, message: "خطای سرور" });
+            res.status(500).json({ success: false, message: "خطای سرور" });
         }
     };
 
@@ -60,7 +85,7 @@ class categoriesController {
             }
         } catch (error) {
             console.error("Error deleting category:", error);
-            res.json({ success: false, message: "خطای سرور" });
+            res.status(500).json({ success: false, message: "خطای سرور" });
         }
     };
 }
