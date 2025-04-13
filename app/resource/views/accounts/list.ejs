@@ -1,0 +1,271 @@
+<div class="container">
+    <div class="row pt-3">
+        <div class="col-6">
+            <h3>لیست حساب ها</h3>
+        </div>
+        <div class="col-6 text-left">
+            <button class="btn btn-primary" id="addAccountBtn">+ افزودن حساب جدید</button>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col-12">
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>عنوان حساب</th>
+                        <th>شماره حساب</th>
+                        <th>شماره شبا</th>
+                        <th>شماره کارت</th>
+                        <th>نام صاحبین حساب</th>
+                        <th>فعال است؟</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (accounts.length> 0) { %>
+                        <% accounts.forEach((account, index)=> { %>
+                            <tr>
+                                <td>
+                                    <%= (currentPage-1) * 10 + index + 1 %>
+                                </td>
+                                <td>
+                                    <%= account.title %>
+                                </td>
+                                <td>
+                                    <%= account.account_number %>
+                                </td>
+                                <td>
+                                    <%= account.sheba_number %>
+                                </td>
+                                <td>
+                                    <%= account.cart_number %>
+                                </td>
+                                <td>
+                                    <%= account.owners %>
+                                </td>
+                                <td>
+                                    <%- account.is_active===1 ? '<i class="bi bi-check-circle text-success"></i>'
+                                        : '<i class="bi bi-x-circle text-danger"></i>' %>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning edit-btn" data-id="<%= account.id %>"
+                                        data-name="<%= JSON.stringify(account) %>">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-btn" data-id="<%= account.id %>">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center">هیچ حسابی یافت نشد!</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <% if (totalCount> 0) { %>
+        <div class="row">
+            <div class="col-6">
+                تعداد کل: <%= totalCount %>
+            </div>
+            <div class="col-6">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination float-left">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="/accounts/?page=<%= currentPage-1 %>">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <% const pageCount=Math.ceil(totalCount/10) %>
+                            <% for (let i=0; i < pageCount; i++) { %>
+                                <li class="page-item <%= currentPage==i+1 ? 'active' : '' %>">
+                                    <a class="page-link" href="/accounts/?page=<%= i+1 %>">
+                                        <%= i+1 %>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <li class="page-item <%= currentPage === pageCount ? 'disabled' : '' %>">
+                                        <a class="page-link" href="/accounts/?page=<%= currentPage+1 %>">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <% } %>
+</div>
+
+<!-- مودال افزودن/ویرایش -->
+<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">افزودن واحد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <input type="hidden" id="accountId" name="id"> <!-- برای تشخیص Add یا Update -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label">عنوان حساب</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="account_number" class="form-label">شماره حساب</label>
+                        <input type="text" class="form-control" id="account_number" name="account_number" >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sheba_number" class="form-label">شماره شبا</label>
+                        <input type="text" class="form-control" id="sheba_number" name="sheba_number" >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cart_number" class="form-label">شماره کارت</label>
+                        <input type="text" class="form-control" id="cart_number" name="cart_number" >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="owners" class="form-label">نام صاحبین حساب</label>
+                        <input type="text" class="form-control" id="owners" name="owners" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="is_active" class="form-label">فعال است؟</label>
+                        <input type="checkbox" class="form-check-input mr-1" id="is_active" name="is_active">
+                    </div>
+
+                    <button type="submit" class="btn btn-success">ذخیره</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تایید حذف -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">تایید حذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = new bootstrap.Modal(document.getElementById("accountModal"));
+        const modalTitle = document.getElementById("modalTitle");
+
+        const accountIdInput = document.getElementById("accountId");
+        const titleInput = document.getElementById("title");
+        const accountNumberInput = document.getElementById("account_number");
+        const shebaNumberInput = document.getElementById("sheba_number");
+        const cartNumberInput = document.getElementById("cart_number");
+        const ownersInput = document.getElementById("owners");
+        const isActiveInput = document.getElementById("is_active");
+
+        const accountForm = document.getElementById("accountForm");
+
+        // وقتی دکمه افزودن کلیک شد، مودال در حالت افزودن باز شود
+        document.getElementById("addAccountBtn").addEventListener("click", function () {
+            modalTitle.innerText = "افزودن حساب";
+            accountIdInput.value = "";  // مقدار ID را پاک کن
+            titleInput.value = "";
+            accountNumberInput.value = "";
+            shebaNumberInput.value = "";
+            cartNumberInput.value = "";
+            ownersInput.value = "";
+            isActiveInput.checked = false;
+            modal.show();
+        });
+
+        // وقتی دکمه ویرایش کلیک شد، مقدارها را پر کند
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                modalTitle.innerText = "ویرایش حساب";
+                accountIdInput.value = this.getAttribute("data-id");
+                titleInput.value = JSON.parse(this.getAttribute("data-name")).title;
+                accountNumberInput.value = JSON.parse(this.getAttribute("data-name")).account_number;
+                shebaNumberInput.value = JSON.parse(this.getAttribute("data-name")).sheba_number;
+                cartNumberInput.value = JSON.parse(this.getAttribute("data-name")).cart_number;
+                ownersInput.value = JSON.parse(this.getAttribute("data-name")).owners;
+                isActiveInput.checked = JSON.parse(this.getAttribute("data-name")).is_active;
+                modal.show();
+            });
+        });
+
+        // ارسال فرم برای افزودن یا ویرایش
+        accountForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            formData.set("is_active", formData.get("is_active") ? 1 : 0);
+
+            const accountId = formData.get("id");
+            const url = accountId ? `/accounts/update/${accountId}` : "/accounts/add";
+            const method = accountId ? "PUT" : "POST";
+
+            fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modal.hide();
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+    });
+
+    // حذف واحد
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const accountId = this.getAttribute("data-id");
+
+            // نمایش مودال تایید حذف
+            const deleteConfirmModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+            deleteConfirmModal.show();
+
+            // وقتی کاربر تایید می‌کند، حذف انجام می‌شود
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                fetch(`/accounts/delete/${accountId}`, {
+                    method: "DELETE"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            deleteConfirmModal.hide(); // مخفی کردن مودال تایید حذف
+                            location.reload(); // صفحه رفرش
+                        } else {
+                            alert("خطا در حذف");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+        });
+    });
+</script>
