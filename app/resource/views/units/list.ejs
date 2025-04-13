@@ -27,7 +27,7 @@
                         <% units.forEach((unit, index)=> { %>
                             <tr>
                                 <td>
-                                    <%= index + 1 %>
+                                    <%= (currentPage-1) * 6 + index + 1 %>
                                 </td>
                                 <td>
                                     <%= unit.unit_number %>
@@ -74,18 +74,24 @@
             <div class="col-6">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination float-left">
-                        <li class="page-item"><a class="page-link" href="#">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="/units/?page=<%= currentPage-1 %>">
                                 <i class="bi bi-chevron-right"></i>
-                            </a></li>
+                            </a>
+                        </li>
                         <% const pageCount=Math.ceil(totalCount/6) %>
                             <% for (let i=0; i < pageCount; i++) { %>
-                                <li class="page-item"><button class="page-link" data-page="<%= i+1 %>">
+                                <li class="page-item <%= currentPage==i+1 ? 'active' : '' %>">
+                                    <a class="page-link" href="/units/?page=<%= i+1 %>">
                                         <%= i+1 %>
-                                    </button></li>
+                                    </a>
+                                </li>
                                 <% } %>
-                                    <li class="page-item"><a class="page-link" href="#">
+                                    <li class="page-item <%= currentPage === pageCount ? 'disabled' : '' %>">
+                                        <a class="page-link" href="/units/?page=<%= currentPage+1 %>">
                                             <i class="bi bi-chevron-left"></i>
-                                        </a></li>
+                                        </a>
+                                    </li>
                     </ul>
                 </nav>
             </div>
@@ -131,6 +137,25 @@
 
                     <button type="submit" class="btn btn-success">ذخیره</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تایید حذف -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">تایید حذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
             </div>
         </div>
     </div>
@@ -204,30 +229,31 @@
         });
     });
 
+    // حذف واحد
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const categoryId = this.getAttribute("data-id");
 
-    document.querySelectorAll('.page-link').forEach(button => {
-        button.addEventListener('click', function () {
-            const pageNum = this.dataset.page;
-            console.log(pageNum)
-            // getlist(pageNum);
+            // نمایش مودال تایید حذف
+            const deleteConfirmModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+            deleteConfirmModal.show();
 
-            const url = `/units`;
-            const method = "POST";
-            const data = {
-                page: pageNum
-            }
-
-            fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    location.reload();
+            // وقتی کاربر تایید می‌کند، حذف انجام می‌شود
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                fetch(`/units/delete/${categoryId}`, {
+                    method: "DELETE"
                 })
-                .catch(error => console.error("Error:", error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            deleteConfirmModal.hide(); // مخفی کردن مودال تایید حذف
+                            location.reload(); // صفحه رفرش
+                        } else {
+                            alert("خطا در حذف");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
         });
     });
-
 </script>

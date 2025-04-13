@@ -2,23 +2,7 @@ const db = require('./../../config/db');
 
 class unitsController {
     showList = async (req, res) => {
-        const skip = 0;
-        const size = 6;
-        try {
-            const [rows] = await db.query(
-                "SELECT * FROM units ORDER BY unit_number ASC LIMIT ?, ?",
-                [skip, size]
-            );
-            const [totalCount] = await db.query('SELECT COUNT(id) AS totalCount FROM units');
-            res.render('units/list', { units: rows, totalCount: totalCount[0].totalCount })
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).send('Server Error');
-        }
-    }
-
-    getList = async (req, res) => {
-        const page = req.body.page;
+        const page = parseInt(req.query.page) || 1;
         const size = 6;
         const skip = (page - 1) * size;
         try {
@@ -27,7 +11,7 @@ class unitsController {
                 [skip, size]
             );
             const [totalCount] = await db.query('SELECT COUNT(id) AS totalCount FROM units');
-            res.json({ units: rows, totalCount: totalCount[0].totalCount })
+            res.render('units/list', { units: rows, totalCount: totalCount[0].totalCount, currentPage: page })
         } catch (error) {
             console.error('Error fetching users:', error);
             res.status(500).send('Server Error');
@@ -90,15 +74,15 @@ class unitsController {
         }
     };
 
-    deleteCategory = async (req, res) => {
+    deleteUnit = async (req, res) => {
         try {
             const { id } = req.params;
-            const [result] = await db.query("DELETE FROM categories WHERE id = ?", [id]);
+            const [result] = await db.query("DELETE FROM units WHERE id = ?", [id]);
 
             if (result.affectedRows > 0) {
                 res.json({ success: true });
             } else {
-                res.json({ success: false, message: "سرفصل یافت نشد" });
+                res.json({ success: false, message: "آیتم یافت نشد" });
             }
         } catch (error) {
             console.error("Error deleting category:", error);
