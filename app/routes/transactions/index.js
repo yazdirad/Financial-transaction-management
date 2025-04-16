@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('transactions/list')
-});
+const transactionsController = require('../../http/controllers/transactionsController')
 
-router.get('/add', (req, res) => {
-    res.render('transactions/add')
-});
+router.get('/', transactionsController.showList);
+router.post('/add', transactionsController.add);
+router.put('/update/:id', transactionsController.update);
+router.delete('/delete/:id', transactionsController.delete);
 
 module.exports = router
