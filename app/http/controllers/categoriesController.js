@@ -30,7 +30,7 @@ class categoriesController {
             });
         }
 
-        if (!(Object.values(categoriesType).include(categoryType))) {
+        if (!(Object.values(categoriesType).find(item=> item.id == categoryType))) {
             return res.status(400).json({
                 success: false,
                 message: "نوع حساب معتبر نیست!"
@@ -38,7 +38,7 @@ class categoriesController {
         }
 
         try {
-            const [result] = await db.query("INSERT INTO categories (title,type) VALUES (?,?)", [title, categoryType]);
+            const [result] = await db.query("INSERT INTO categories (title,categoryType) VALUES (?,?)", [title, categoryType]);
 
             if (result.insertId) {
                 res.json({ success: true });
@@ -58,7 +58,7 @@ class categoriesController {
             const { categoryType } = req.body;
 
             const [result] = await db.query(
-                "UPDATE categories SET title = ?, type = ? WHERE id = ?",
+                "UPDATE categories SET title = ?, categoryType = ? WHERE id = ?",
                 [title, categoryType, id]
             );
 

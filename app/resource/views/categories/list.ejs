@@ -30,12 +30,12 @@
                                     <%= category.title %>
                                 </td>
                                 <td>
-                                    <%= Object.values(categoriesType).find(item=> item.id == category.type)?.title %>
+                                    <%= Object.values(categoriesType).find(item=> item.id == category.categoryType)?.title %>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-warning edit-btn" data-id="<%= category.id %>"
                                         data-name="<%= category.title %>" 
-                                        data-type="<%= category.type %>">
+                                        data-type="<%= category.categoryType %>">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="<%= category.id %>">
