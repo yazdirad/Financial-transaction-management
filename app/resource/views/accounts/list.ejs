@@ -46,16 +46,16 @@
                                     <%= account.owners %>
                                 </td>
                                 <td class="text-center">
-                                    <%- account.is_active===1 ? '<i class="bi bi-check-circle text-success"></i>'
-                                        : '<i class="bi bi-x-circle text-danger"></i>' %>
+                                    <%- account.is_active===1 ? '<i class="fa fa-check text-success"></i>'
+                                        : '<i class="fa fa-times text-danger"></i>' %>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-warning edit-btn" data-id="<%= account.id %>"
                                         data-name="<%= JSON.stringify(account) %>">
-                                        <i class="bi bi-pencil-square"></i>
+                                        <i class="fa fa-pencil"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="<%= account.id %>">
-                                        <i class="bi bi-trash"></i>
+                                        <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -79,7 +79,7 @@
                     <ul class="pagination float-left">
                         <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                             <a class="page-link" href="/accounts/?page=<%= currentPage-1 %>">
-                                <i class="bi bi-chevron-right"></i>
+                                <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>
                         <% const pageCount=Math.ceil(totalCount/10) %>
@@ -92,7 +92,7 @@
                                 <% } %>
                                     <li class="page-item <%= currentPage === pageCount ? 'disabled' : '' %>">
                                         <a class="page-link" href="/accounts/?page=<%= currentPage+1 %>">
-                                            <i class="bi bi-chevron-left"></i>
+                                            <i class="fa fa-chevron-left"></i>
                                         </a>
                                     </li>
                     </ul>
@@ -107,7 +107,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">افزودن واحد</h5>
+                <h5 class="modal-title" id="modalTitle">افزودن حساب بانکی</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -120,17 +120,17 @@
 
                     <div class="mb-3">
                         <label for="account_number" class="form-label">شماره حساب</label>
-                        <input type="text" class="form-control" id="account_number" name="account_number" >
+                        <input type="text" class="form-control" id="account_number" name="account_number">
                     </div>
 
                     <div class="mb-3">
                         <label for="sheba_number" class="form-label">شماره شبا</label>
-                        <input type="text" class="form-control" id="sheba_number" name="sheba_number" >
+                        <input type="text" class="form-control" id="sheba_number" name="sheba_number">
                     </div>
 
                     <div class="mb-3">
                         <label for="cart_number" class="form-label">شماره کارت</label>
-                        <input type="text" class="form-control" id="cart_number" name="cart_number" >
+                        <input type="text" class="form-control" id="cart_number" name="cart_number">
                     </div>
 
                     <div class="mb-3">
@@ -239,6 +239,13 @@
                 })
                 .catch(error => console.error("Error:", error));
         });
+
+        // بستن مودال
+        document.querySelectorAll(".btn-close").forEach(button => {
+            button.addEventListener("click", function () {
+                modal.hide();
+            })
+        });
     });
 
     // حذف واحد
@@ -265,6 +272,13 @@
                         }
                     })
                     .catch(error => console.error("Error:", error));
+            });
+
+            // بستن مودال
+            document.querySelectorAll(".btn-close").forEach(button => {
+                button.addEventListener("click", function () {
+                    deleteConfirmModal.hide();
+                })
             });
         });
     });
