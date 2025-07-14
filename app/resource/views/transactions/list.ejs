@@ -16,13 +16,11 @@
                         <th class="text-center">#</th>
                         <th class="text-center">شماره واحد</th>
                         <th class="text-center">سرفصل</th>
-                        <th class="text-center">مبلغ</th>
-                        <th class="text-center">نوع</th>
+                        <th class="text-center">مبلغ (ریال)</th>
+                        <th class="text-center">نوع تراکنش</th>
                         <th class="text-center">تاریخ تراکنش</th>
                         <th class="text-center">پرداخت نقدی؟</th>
-                        <th class="text-center">حساب</th>
                         <th class="text-center">سهم مالک است؟</th>
-                        <th class="text-center">توضیحات</th>
                         <th class="text-center">عملیات</th>
                     </tr>
                 </thead>
@@ -34,41 +32,35 @@
                                     <%= (currentPage-1) * 10 + index + 1 %>
                                 </td>
                                 <td>
-                                    <%= transaction.unit_id %>
+                                    واحد<%= transaction.unit_number %> (طبقه <%= transaction.unit_floor %>)
                                 </td>
                                 <td>
-                                    <%= transaction.category_id %>
+                                    <%= transaction.category_title %>
                                 </td>
                                 <td>
-                                    <%= transaction.amount %>
+                                    <%= (transaction.amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',' ) %>
                                 </td>
                                 <td>
-                                    <%= transaction.type %>
+                                    <%- transaction.type===1 ? 'دریافتی' : transaction.type===2 ? 'پرداختی' : '--' %>
                                 </td>
                                 <td class="text-center">
                                     <%= transaction.trans_date %>
                                 </td>
-                                <td>
-                                    <%- transaction.is_cash===1 ? '<i class="bi bi-check-circle text-success"></i>'
-                                        : '<i class="bi bi-x-circle text-danger"></i>' %>
-                                </td>
-                                <td>
-                                    <%= transaction.account_id %>
+                                <td class="text-center">
+                                    <%- transaction.is_cash===1 ? '<i class="fa fa-check text-success"></i>'
+                                        : '<i class="fa fa-times text-danger"></i>' %>
                                 </td>
                                 <td class="text-center">
-                                    <%- transaction.for_resident===0 ? '<i class="bi bi-check-circle text-success"></i>'
-                                        : '<i class="bi bi-x-circle text-danger"></i>' %>
-                                </td>
-                                <td>
-                                    <%= transaction.description %>
+                                    <%- transaction.for_resident===1 ? '<i class="fa fa-check text-success"></i>'
+                                        : '<i class="fa fa-times text-danger"></i>' %>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-warning edit-btn" data-id="<%= transaction.id %>"
                                         data-name="<%= JSON.stringify(transaction) %>">
-                                        <i class="bi bi-pencil-square"></i>
+                                        <i class="fa fa-pencil"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="<%= transaction.id %>">
-                                        <i class="bi bi-trash"></i>
+                                        <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -92,7 +84,7 @@
                     <ul class="pagination float-left">
                         <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                             <a class="page-link" href="/transactions/?page=<%= currentPage-1 %>">
-                                <i class="bi bi-chevron-right"></i>
+                                <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>
                         <% const pageCount=Math.ceil(totalCount/10) %>
@@ -105,7 +97,7 @@
                                 <% } %>
                                     <li class="page-item <%= currentPage === pageCount ? 'disabled' : '' %>">
                                         <a class="page-link" href="/transactions/?page=<%= currentPage+1 %>">
-                                            <i class="bi bi-chevron-left"></i>
+                                            <i class="fa fa-chevron-left"></i>
                                         </a>
                                     </li>
                     </ul>
@@ -113,8 +105,177 @@
             </div>
         </div>
         <% } %>
-
-
-
-
 </div>
+
+<!-- مودال افزودن/ویرایش -->
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">افزودن تراکنش</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <input type="hidden" id="unitId" name="id"> <!-- برای تشخیص Add یا Update -->
+                    <div class="mb-3">
+                        <label for="unit_number" class="form-label">شماره واحد</label>
+                        <input type="number" class="form-control" id="unit_number" name="unit_number" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="floor" class="form-label">طبقه</label>
+                        <input type="text" class="form-control" id="floor" name="floor" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="meterage" class="form-label">متراژ</label>
+                        <input type="number" class="form-control" id="meterage" name="meterage" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="has_parking" class="form-label">دارای پارکینگ</label>
+                        <input type="checkbox" class="form-check-input mr-1" id="has_parking" name="has_parking">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="has_warehouse" class="form-label">دارای انباری</label>
+                        <input type="checkbox" class="form-check-input mr-1" id="has_warehouse" name="has_warehouse">
+                    </div>
+
+                    <button type="submit" class="btn btn-success">ذخیره</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تایید حذف -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">تایید حذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = new bootstrap.Modal(document.getElementById("transactionModal"));
+        const modalTitle = document.getElementById("modalTitle");
+        const unitIdInput = document.getElementById("unitId");
+        const unitNumberInput = document.getElementById("unit_number");
+        const floorInput = document.getElementById("floor");
+        const meterageInput = document.getElementById("meterage");
+        const hasParkingInput = document.getElementById("has_parking");
+        const hasWarehouseInput = document.getElementById("has_warehouse");
+        const transactionForm = document.getElementById("transactionForm");
+
+        // وقتی دکمه افزودن کلیک شد، مودال در حالت افزودن باز شود
+        document.getElementById("addTransactionBtn").addEventListener("click", function () {
+            modalTitle.innerText = "افزودن تراکنش";
+            unitIdInput.value = "";  // مقدار ID را پاک کن
+            unitNumberInput.value = "";
+            floorInput.value = "";
+            meterageInput.value = "";
+            hasParkingInput.checked = false;
+            hasWarehouseInput.checked = false;
+            modal.show();
+        });
+
+        // وقتی دکمه ویرایش کلیک شد، مقدارها را پر کند
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                modalTitle.innerText = "ویرایش تراکنش";
+                unitIdInput.value = this.getAttribute("data-id");
+                unitNumberInput.value = JSON.parse(this.getAttribute("data-name")).unit_number;
+                floorInput.value = JSON.parse(this.getAttribute("data-name")).floor;
+                meterageInput.value = JSON.parse(this.getAttribute("data-name")).meterage;
+                hasParkingInput.checked = JSON.parse(this.getAttribute("data-name")).has_parking;
+                hasWarehouseInput.checked = JSON.parse(this.getAttribute("data-name")).has_warehouse;
+                modal.show();
+            });
+        });
+
+        // ارسال فرم برای افزودن یا ویرایش
+        transactionForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            formData.set("has_parking", formData.get("has_parking") ? 1 : 0)
+            formData.set("has_warehouse", formData.get("has_warehouse") ? 1 : 0)
+
+            const unitId = formData.get("id");
+            const url = unitId ? `/units/update/${unitId}` : "/units/add";
+            const method = unitId ? "PUT" : "POST";
+
+            fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modal.hide();
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+        // بستن مودال
+        document.querySelectorAll(".btn-close").forEach(button => {
+            button.addEventListener("click", function () {
+                modal.hide();
+            })
+        });
+    });
+
+    // حذف واحد
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const categoryId = this.getAttribute("data-id");
+
+            // نمایش مودال تایید حذف
+            const deleteConfirmModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+            deleteConfirmModal.show();
+
+            // وقتی کاربر تایید می‌کند، حذف انجام می‌شود
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                fetch(`/units/delete/${categoryId}`, {
+                    method: "DELETE"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            deleteConfirmModal.hide(); // مخفی کردن مودال تایید حذف
+                            location.reload(); // صفحه رفرش
+                        } else {
+                            alert("خطا در حذف");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+
+            // بستن مودال
+            document.querySelectorAll(".btn-close").forEach(button => {
+                button.addEventListener("click", function () {
+                    deleteConfirmModal.hide();
+                })
+            });
+        });
+    });
+</script>

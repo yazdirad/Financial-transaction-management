@@ -4,7 +4,7 @@ const categoriesType = require('./../../models/enums/categoriesType');
 class categoriesController {
     showList = async (req, res) => {
         try {
-            const [rows] = await db.query('SELECT * FROM categories');
+            const [rows] = await db.query('SELECT * FROM bld_categories');
             res.render('categories/list', { categories: rows, categoriesType: categoriesType })
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -38,7 +38,7 @@ class categoriesController {
         }
 
         try {
-            const [result] = await db.query("INSERT INTO categories (title,categoryType) VALUES (?,?)", [title, categoryType]);
+            const [result] = await db.query("INSERT INTO bld_categories (title,category_type) VALUES (?,?)", [title, categoryType]);
 
             if (result.insertId) {
                 res.json({ success: true });
@@ -58,7 +58,7 @@ class categoriesController {
             const { categoryType } = req.body;
 
             const [result] = await db.query(
-                "UPDATE categories SET title = ?, categoryType = ? WHERE id = ?",
+                "UPDATE bld_categories SET title = ?, category_type = ? WHERE id = ?",
                 [title, categoryType, id]
             );
 
@@ -76,7 +76,7 @@ class categoriesController {
     deleteCategory = async (req, res) => {
         try {
             const { id } = req.params;
-            const [result] = await db.query("DELETE FROM categories WHERE id = ?", [id]);
+            const [result] = await db.query("DELETE FROM bld_categories WHERE id = ?", [id]);
 
             if (result.affectedRows > 0) {
                 res.json({ success: true });

@@ -7,9 +7,30 @@ class transactionsController {
         const skip = (page - 1) * size;
         try {
             const [rows] = await db.query(
-                "SELECT * FROM transactions ORDER BY trans_date DESC LIMIT ?, ?",
+                // "SELECT * FROM transactions ORDER BY trans_date DESC LIMIT ?, ?",
+                "SELECT " +
+                "    transactions.id " +
+                "    ,transactions.unit_id " +
+                "    ,units.unit_number " +
+                "    ,units.floor AS unit_floor " +
+                "    ,transactions.category_id " +
+                "    ,categories.title AS category_title " +
+                "    ,transactions.amount " +
+                "    ,transactions.type " +
+                "    ,transactions.trans_date " +
+                "    ,transactions.is_cash " +
+                "    ,transactions.account_id " +
+                "    ,transactions.for_resident " +
+                "    ,transactions.description " +
+                "FROM transactions " +
+                "LEFT JOIN categories ON categories.id = transactions.category_id " +
+                "LEFT JOIN units ON units.id = transactions.unit_id " +
+                "ORDER BY trans_date DESC LIMIT ?, ? ",
                 [skip, size]
             );
+            // rows.forEach(item => {
+            //     item.trans_date_fa = moment(item.trans_date).format('jYYYY/jMM/jDD')
+            // });
             const [totalCount] = await db.query('SELECT COUNT(id) AS totalCount FROM transactions');
             res.render('transactions/list', { transactions: rows, totalCount: totalCount[0].totalCount, currentPage: page })
         } catch (error) {
